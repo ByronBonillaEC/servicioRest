@@ -36,34 +36,39 @@ public class UserController {
     }
 
     @GetMapping("/get-users")
-    public List<User> getAll(){
+    public List<User> getAll() {
         return userService.findAll();
     }
 
     /*
-    @PostMapping("/add-user")
-    public User createUser(@RequestBody User user){    
-        return userService.create(user);     
-    }
-    */
+     * @PostMapping("/add-user")
+     * public User createUser(@RequestBody User user){
+     * return userService.create(user);
+     * }
+     */
 
     @PostMapping("/add-user")
-    public ResponseEntity createUser(@RequestBody User user){            
+    public ResponseEntity createUser(@RequestBody User user) {
         return new ResponseEntity<User>(userService.create(user), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update-user")
-    public User updateUser(@RequestBody User user){    
-        return userService.update(user);
+    @PutMapping("/update-user/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User user) {
+        user.setId(userId);
+        User updated = userService.update(user);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/get-user-by-id/{userId}")
-    public User getById(@PathVariable Integer userId){
+    public User getById(@PathVariable Integer userId) {
         return userService.getById(userId);
     }
-    
+
     @DeleteMapping("/delete-user/{userId}")
-    public void deleteById(@PathVariable Integer userId){
+    public void deleteById(@PathVariable Integer userId) {
         userService.deleteById(userId);
     }
 
